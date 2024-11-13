@@ -1,12 +1,13 @@
 {
-  "name": "claude-sonnet-chat",
+  "name": "gpt4o-chat-app",
   "version": "1.0.0",
-  "description": "Chat with Claude 3.5 Sonnet using Puter.js API",
+  "description": "Chat with GPT-4o using Puter.js API and file upload",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "multer": "^1.4.3"
   }
 }
