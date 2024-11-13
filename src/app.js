@@ -5,6 +5,7 @@ const chatHistory = document.getElementById('chat-history');
 const userInput = document.getElementById('user-input');
 const fileInput = document.getElementById('file-input');
 const sendButton = document.getElementById('send-button');
+const errorMessage = document.getElementById('error-message');
 
 // Загрузка истории
 const history = loadHistory();
@@ -14,9 +15,16 @@ sendButton.addEventListener('click', async () => {
     const userMessage = userInput.value;
     const file = fileInput.files[0];
 
-    if (!userMessage && !file) return;  // Если нет ни текста, ни файла
+    // Очистка сообщения об ошибке перед каждым запросом
+    errorMessage.textContent = '';
 
-    appendMessageToChat({ role: 'user', content: userMessage });
+    // Проверяем, что есть либо сообщение, либо файл
+    if (!userMessage && !file) {
+        errorMessage.textContent = 'Введите сообщение или прикрепите файл.';
+        return;
+    }
+
+    appendMessageToChat({ role: 'user', content: userMessage || 'Файл загружается...' });
 
     try {
         let fileUrl = null;
@@ -31,12 +39,21 @@ sendButton.addEventListener('click', async () => {
                 body: formData
             });
 
+            if (!uploadResponse.ok) {
+                throw new Error('Ошибка при загрузке файла.');
+            }
+
             const uploadResult = await uploadResponse.json();
             fileUrl = uploadResult.url;
         }
 
         // Формируем запрос к GPT-4o через Puter.js
-        const response = await puter.ai.chat(userMessage, { model: 'gpt-4o', fileUrl });
+        const response = await puter.ai.chat(userMessage || 'Файл прикреплён.', { model: 'gpt-4o', fileUrl });
+
+        if (!response || !response.message || !response.message.content) {
+            throw new Error('Ошибка при получении ответа от GPT-4o.');
+        }
+
         const responseMessage = response.message.content[0].text;
 
         appendMessageToChat({ role: 'ai', content: responseMessage });
@@ -49,6 +66,7 @@ sendButton.addEventListener('click', async () => {
         fileInput.value = ''; // Очистить поле загрузки файла
     } catch (error) {
         console.error("Ошибка при отправке запроса:", error);
+        errorMessage.textContent = `Ошибка: ${error.message}`;
     }
 });
 
