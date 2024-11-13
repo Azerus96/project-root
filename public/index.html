@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claude 3.5 Sonnet Chat</title>
+    <title>GPT-4o Chat with File Upload</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://js.puter.com/v2/"></script>
 </head>
@@ -11,50 +11,12 @@
     <div class="chat-container">
         <div id="chat-history"></div>
         <textarea id="user-input" placeholder="Введите ваш запрос..."></textarea>
+        
+        <!-- Добавим поле для загрузки файлов -->
+        <input type="file" id="file-input" />
+        
         <button id="send-button">Отправить</button>
     </div>
-    <script>
-        const chatHistory = document.getElementById('chat-history');
-        const userInput = document.getElementById('user-input');
-        const sendButton = document.getElementById('send-button');
-
-        // Загрузка истории (если функция сохранения истории уже есть)
-        const history = JSON.parse(localStorage.getItem('chatHistory')) || [];
-        history.forEach(message => appendMessageToChat(message));
-
-        sendButton.addEventListener('click', async () => {
-            const userMessage = userInput.value;
-            if (!userMessage) return;  // Проверка, что сообщение не пустое
-
-            appendMessageToChat({ role: 'user', content: userMessage });
-
-            try {
-                console.log("Отправляем запрос к API: ", userMessage);
-                const response = await puter.ai.chat(userMessage, { model: 'claude-3-5-sonnet' });
-                const responseMessage = response.message.content[0].text;
-                console.log("Ответ от API: ", responseMessage);
-
-                appendMessageToChat({ role: 'ai', content: responseMessage });
-
-                // Сохранение истории
-                const history = JSON.parse(localStorage.getItem('chatHistory')) || [];
-                history.push({ role: 'user', content: userMessage });
-                history.push({ role: 'ai', content: responseMessage });
-                localStorage.setItem('chatHistory', JSON.stringify(history));
-
-                userInput.value = '';  // Очистка поля ввода
-            } catch (error) {
-                console.error("Ошибка при отправке запроса:", error);
-            }
-        });
-
-        function appendMessageToChat(message) {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message', message.role);
-            messageElement.textContent = message.content;
-            chatHistory.appendChild(messageElement);
-            chatHistory.scrollTop = chatHistory.scrollHeight;  // Прокрутка вниз
-        }
-    </script>
+    <script src="src/app.js"></script>
 </body>
 </html>
