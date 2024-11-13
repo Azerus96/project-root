@@ -34,6 +34,7 @@ sendButton.addEventListener('click', async () => {
             const formData = new FormData();
             formData.append('file', file);
 
+            console.log('Загружаем файл на сервер...');
             const uploadResponse = await fetch('/upload', {
                 method: 'POST',
                 body: formData
@@ -45,9 +46,11 @@ sendButton.addEventListener('click', async () => {
 
             const uploadResult = await uploadResponse.json();
             fileUrl = uploadResult.url;
+            console.log('Файл загружен, URL:', fileUrl);
         }
 
         // Формируем запрос к GPT-4o через Puter.js
+        console.log('Отправляем запрос к GPT-4o...');
         const response = await puter.ai.chat(userMessage || 'Файл прикреплён.', { model: 'gpt-4o', fileUrl });
 
         if (!response || !response.message || !response.message.content) {
@@ -55,6 +58,7 @@ sendButton.addEventListener('click', async () => {
         }
 
         const responseMessage = response.message.content[0].text;
+        console.log('Ответ от GPT-4o:', responseMessage);
 
         appendMessageToChat({ role: 'ai', content: responseMessage });
 
