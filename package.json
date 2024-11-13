@@ -1,0 +1,12 @@
+{
+  "name": "claude-sonnet-chat",
+  "version": "1.0.0",
+  "description": "Chat with Claude 3.5 Sonnet using Puter.js API",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
