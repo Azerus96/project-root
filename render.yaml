@@ -1,8 +1,12 @@
 services:
   - type: web
-    name: claude-sonnet-chat
+    name: gpt4o-chat-app
     env: node
     plan: free
     buildCommand: 'npm install'
     startCommand: 'node server/server.js'
     autoDeploy: true
+    disk:
+      name: persistent-disk
+      mountPath: /uploads
+      sizeGB: 1
